@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Orang · PANTAU-TB</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page="records">
+  <header class="site-header">
+    <a class="brand" href="index.html"><img src="assets/logo-horizontal.png" alt="PANTAU-TB"></a>
+    <nav class="top-nav"><a href="index.html" data-nav="map">Peta Utama</a><a href="records.html" data-nav="records">Data Orang</a><a href="methodology.html" data-nav="method">Model & Metode</a></nav>
+    <a class="btn primary compact" href="index.html#add">+ Tambah dari peta</a>
+  </header>
+  <main class="page-shell">
+    <section class="hero compact-hero"><div class="hero-content"><h1>Registri Penderita TBC</h1></div>
+</section>
+    <section class="panel">
+      <div class="panel-head"><div><h2>E-Form Input</h2></div><input class="search-input" id="search" placeholder="Cari ID / NIK"></div>
+      <div class="record-stats" id="recordStats"></div>
+      <div class="record-table-wrap"><div class="record-table" id="recordTable"></div></div>
+    </section>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="seed-data.js"></script><script src="core.js"></script><script src="common.js"></script><script src="records.js"></script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Model &amp; Metode · PANTAU-TB</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+<link href="methodology-additions.css" rel="stylesheet"/>
+</head>
+<body data-page="method">
+<header class="site-header">
+<a class="brand" href="index.html">
+<img alt="PANTAU-TB" src="assets/logo-horizontal.png"/>
+</a>
+<nav class="top-nav">
+<a data-nav="map" href="index.html">Peta Utama</a>
+<a data-nav="records" href="records.html">Data Orang</a>
+<a data-nav="method" href="methodology.html">Model &amp; Metode</a>
+</nav>
+<a class="btn primary compact" href="index.html">Buka peta</a>
+</header>
+<main class="page-shell method-v13">
+<section class="method-v13-hero">
+<h1>Informasi Sistem PANTAU-TB</h1>
+
+
+</section>
+<article class="method-v13-paper">
+<section class="method-v13-section method-v13-lead">
+<h2>A. Latar Belakang</h2>
+<p>
+          Tuberkulosis masih menjadi masalah kesehatan masyarakat penting di Indonesia.
+          WHO melaporkan bahwa Indonesia menyumbang sekitar <strong>10% kasus TB insiden
+          global pada 2024</strong>. Selain beban nasional yang tinggi, penelitian
+          spasiotemporal di Indonesia menunjukkan bahwa kejadian TB tidak tersebar merata
+          dan dapat membentuk hotspot geografis. Karena itu, visualisasi spasial dapat
+          membantu petugas melihat konsentrasi kasus dan menentukan area yang perlu
+          memperoleh perhatian lebih dahulu.<sup><a href="#ref1">[1]</a></sup>
+<sup><a href="#ref2">[2]</a></sup>
+</p>
+<p>
+          Tujuan PANTAU-TB bukan menggantikan diagnosis klinis. Sistem ini dirancang
+          sebagai <strong>alat pemantauan dan demonstrasi keputusan berbasis data</strong>:
+          menggabungkan informasi individu, status konfirmasi, riwayat kunjungan, dan
+          konteks lokasi menjadi peta indeks risiko lokal.
+        </p>
+</section>
+<section class="method-v13-section">
+<h2>B. Identifikasi Masalah</h2>
+<h3>1. Klasifikasi probabilistik pada individu suspek</h3>
+<p>
+          Untuk individu yang belum terkonfirmasi TB, sistem menghitung probabilitas
+          kelas berdasarkan evidence yang tersedia. Masalah diformalkan sebagai
+          klasifikasi biner:
+        </p>
+<div class="method-v13-formula"><math aria-label="C anggota himpunan TB dan bukan TB" display="block">
+<mrow>
+<mi>C</mi><mo>∈</mo>
+<mo>{</mo><mi mathvariant="normal">TB</mi><mo>,</mo>
+<mtext>bukan TB</mtext><mo>}</mo>
+</mrow>
+</math></div>
+<p>
+          Dengan evidence
+          <strong>X = {kontak TB, batuk ≥14 hari, keringat malam, penurunan berat badan,
+          demam, merokok, diabetes, kepadatan hunian, ventilasi, status gizi, usia}</strong>,
+          posterior dihitung menggunakan Naive Bayes:
+        </p>
+<div class="method-v13-formula">
+  <math display="block">
+    <mrow>
+
+      <mi>P</mi>
+      <mo stretchy="false">(</mo>
+      <mi>C</mi>
+      <mo>|</mo>
+      <mi>X</mi>
+      <mo stretchy="false">)</mo>
+
+      <mo>∝</mo>
+
+      <mi>P</mi>
+      <mo stretchy="false">(</mo>
+      <mi>C</mi>
+      <mo stretchy="false">)</mo>
+
+      <mo>×</mo>
+
+      <msub>
+        <mo largeop="true">∏</mo>
+        <mi>i</mi>
+      </msub>
+
+      <mi>P</mi>
+      <mo stretchy="false">(</mo>
+
+      <msub>
+        <mi>x</mi>
+        <mi>i</mi>
+      </msub>
+
+      <mo>|</mo>
+      <mi>C</mi>
+
+      <mo stretchy="false">)</mo>
+
+    </mrow>
+  </math>
+</div>
+<p>
+          Koordinat <strong>tidak</strong> digunakan untuk menentukan seseorang TB atau
+          tidak. Koordinat baru dipakai setelah probabilitas individu tersedia.
+        </p>
+<h3>2. Pemetaan indeks risiko spasial</h3>
+<p>
+          Setelah status atau probabilitas individu diketahui, setiap titik memengaruhi
+          area di sekitarnya melalui fungsi bobot jarak. Tujuannya adalah membentuk
+          <strong>indeks pemantauan spasial</strong>, bukan menghitung probabilitas klinis
+          penularan.
+        </p>
+<div class="method-v13-formula"><div aria-label="Fungsi bobot jarak" class="math-cases">
+<math display="block">
+<mrow>
+<mi>w</mi><mo>(</mo><mi>d</mi><mo>,</mo><mi>R</mi><mo>)</mo>
+<mo>=</mo>
+<mrow>
+<mo>{</mo>
+<mtable columnalign="left left" rowspacing=".65em">
+<mtr>
+<mtd><mn>0</mn></mtd>
+<mtd><mtext>jika </mtext><mi>d</mi><mo>≥</mo><mi>R</mi></mtd>
+</mtr>
+<mtr>
+<mtd>
+<msup><mi>x</mi><mn>2</mn></msup>
+<mo>(</mo><mn>3</mn><mo>−</mo><mn>2</mn><mi>x</mi><mo>)</mo>
+</mtd>
+<mtd><mtext>jika </mtext><mi>d</mi><mo>&lt;</mo><mi>R</mi></mtd>
+</mtr>
+</mtable>
+</mrow>
+</mrow>
+</math>
+<math class="math-secondary" display="block">
+<mrow>
+<mi>x</mi><mo>=</mo><mn>1</mn><mo>−</mo>
+<mfrac><mi>d</mi><mi>R</mi></mfrac>
+</mrow>
+</math>
+</div></div>
+<p>
+          Pengaruh beberapa sumber digabungkan dengan model komplementer:
+        </p>
+<div class="method-v13-formula">
+  <math display="block">
+    <mrow>
+
+      <mi>Risk</mi>
+      <mo stretchy="false">(</mo>
+      <mi>q</mi>
+      <mo stretchy="false">)</mo>
+
+      <mo>=</mo>
+
+      <mn>1</mn>
+      <mo>−</mo>
+
+      <msub>
+        <mo largeop="true">∏</mo>
+        <mi>i</mi>
+      </msub>
+
+      <mo stretchy="false">(</mo>
+
+      <mn>1</mn>
+      <mo>−</mo>
+
+      <msub>
+        <mi>contribution</mi>
+        <mi>i</mi>
+      </msub>
+
+      <mo stretchy="false">)</mo>
+
+    </mrow>
+  </math>
+</div>
+<p>
+          Rumus tersebut membuat dua atau lebih sumber yang saling tumpang-tindih
+          menghasilkan indeks lebih tinggi dibanding satu sumber tunggal.
+        </p>
+</section>
+<section class="method-v13-section">
+<h2>C. Informasi Data</h2>
+<p> Variabel berikut adalah struktur dataset yang dipakai sistem.</p>
+<div class="method-v13-table-wrap">
+<table class="method-v13-table">
+<thead>
+<tr>
+<th>Kelompok</th>
+<th>Variabel</th>
+<th>Peran dalam sistem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Identitas minimum</td>
+<td>ID/NIK termasking, umur, jenis kelamin</td>
+<td>Administrasi dan stratifikasi; identitas tidak dipublikasikan di peta.</td>
+</tr>
+<tr>
+<td>Evidence suspek</td>
+<td>Kontak TB, batuk, keringat malam, penurunan BB, demam, merokok, diabetes, hunian, ventilasi, gizi</td>
+<td>Input Naive Bayes untuk menghitung posterior suspek.</td>
+</tr>
+<tr>
+<td>Kasus terkonfirmasi</td>
+<td>Status TB, jenis tes, status potensi infeksius</td>
+<td>Kasus terkonfirmasi tidak diprediksi ulang oleh Naive Bayes.</td>
+</tr>
+<tr>
+<td>Spasial</td>
+<td>Latitude, longitude</td>
+<td>Digunakan setelah klasifikasi untuk pemetaan indeks lokal.</td>
+</tr>
+<tr>
+<td>Mobilitas</td>
+<td>Lokasi yang dikunjungi, tanggal, durasi</td>
+<td>Mengubah indeks lokasi publik berdasarkan kunjungan kasus terkonfirmasi.</td>
+</tr>
+<tr>
+<td>Konteks lokasi</td>
+<td>Terbuka/semi-terbuka/tertutup, kepadatan</td>
+<td>Memberi bobot pada indeks lokasi; perlu diverifikasi lapangan.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="method-v13-note">
+<strong>Penting:</strong> prior P(TB) dan likelihood P(xᵢ|TB) pada kode saat ini
+          masih parameter demo. Untuk laporan final, parameter tersebut harus dihitung
+          dari dataset berlabel nyata atau diambil dari sumber yang dapat dipertanggungjawabkan.
+        </div>
+</section>
+<section class="method-v13-section">
+<h2>D. Desain Sistem</h2>
+<h3>1. Naive Bayes</h3>
+<p>
+    Keunggulan dari Naive-Bayes karena metode yang cukup familiar yang digunakan dalam baseline classifier.
+    Peta wilayah observasi dibagi menjadi matriks koordinat, setiap titik penderita suspek akan dihitung probabilitas
+    posterior yang dapat dirumuskan sebagai berikut dengan evidence (bukti) dengan gejala yang dialami seseorang,
+    lokasi yang dikunjungi.
+
+<div class="method-v13-formula"><math aria-label="P C bersyarat e satu sampai e n sama dengan alpha dikali P C dikali produk dari i sama dengan satu sampai n untuk P e i bersyarat C" display="block">
+<mrow>
+<mi>P</mi><mo>(</mo><mi>C</mi><mo>|</mo><msub><mi>e</mi><mn>1</mn></msub><mo>,</mo><mo>...</mo><mo>,</mo><msub><mi>e</mi><mi>n</mi></msub><mo>)</mo>
+<mo>=</mo>
+<mi>&alpha;</mi><mi>P</mi><mo>(</mo><mi>C</mi><mo>)</mo>
+<munderover>
+<mo>&prod;</mo>
+<mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow>
+<mi>n</mi>
+</munderover>
+<mi>P</mi><mo>(</mo><msub><mi>e</mi><mi>i</mi></msub><mo>|</mo><mi>C</mi><mo>)</mo>
+</mrow>
+</math></div>
+<p> Salah satu tantangan dalam sistem pemetaan TBC adalah adanya ketidakpastian spasial. Batas area paparan dari seorang suspek atau penderita TBC sulit ditentukan secara pasti karena proses penularan
+  dipengaruhi oleh jarak, durasi, dan pola interaksi antarindividu. Oleh karena itu, pendekatan pemetaan yang hanya menggunakan batas radius belum mampu menggambarkan kondisi persebaran TBC secara realistis. 
+  Untuk mengatasi hal tersebut, digunakan model Naive Bayes yang menghasilkan nilai probabilitas berdasarkan berbagai informasi atau faktor yang tersedia. Nilai probabilitas tersebut dapat divisualisasikan 
+  secara dinamis pada peta, sehingga perubahan kondisi persebaran dapat diperbarui ketika terdapat penambahan suspek atau penderita TBC maupun perubahan informasi lainnya.
+          <sup><a href="#ref3">[3]</a></sup>
+<sup><a href="#ref4">[4]</a></sup>
+</p>
+<h3>2. Peta spasial</h3>
+<p>
+          Studi TB di Indonesia menunjukkan heterogenitas spasial dan keberadaan cluster/hotspot.
+          Studi di Daerah Istimewa Yogyakarta juga pernah menggunakan koordinat alamat,
+          GPS, dan kernel estimation untuk mempelajari pola persebaran TB. Karena itu,
+          komponen peta pada PANTAU-TB digunakan untuk memperlihatkan pola lokal yang sulit
+          terlihat bila data hanya ditampilkan sebagai tabel.<sup><a href="#ref2">[2]</a></sup>
+<sup><a href="#ref5">[5]</a></sup>
+</p>
+<h3>3. Penetapan Bandwidth</h3>
+<p>
+          Bandwidth <strong>42 m untuk confirmed, 30 m untuk suspect, dan 36 m untuk lokasi
+          publik</strong> merupakan parameter analisis/visualisasi prototipe. Parameter dibuat
+          tetap dalam satuan meter agar bentuk area risiko tidak berubah ketika pengguna
+          melakukan zoom in atau zoom out. Angka tersebut <strong>bukan radius biologis
+          penularan TB</strong>. Pedoman contact investigation menekankan durasi, frekuensi,
+          proximity, infectiousness sumber, dan sirkulasi udara; tidak ada satu jarak aman
+          universal untuk paparan TB.<sup><a href="#ref6">[6]</a></sup>
+</p>
+<h3>4. Riwayat Lokasi (7 Hari)</h3>
+<p>
+          Jendela tujuh hari pada prototipe berfungsi sebagai <strong>recency window untuk
+          demonstrasi sistem</strong>, bukan aturan medis atau karantina TB. Dalam kode,
+          bobot kunjungan turun secara linear:
+        </p>
+<div class="method-v13-formula"><math aria-label="recency d sama dengan maksimum nol dan satu dikurangi d per tujuh" display="block">
+<mrow>
+<mi>recency</mi><mo>(</mo><mi>d</mi><mo>)</mo>
+<mo>=</mo>
+<mi>max</mi>
+<mo>(</mo><mn>0</mn><mo>,</mo>
+<mn>1</mn><mo>−</mo>
+<mfrac><mi>d</mi><mn>7</mn></mfrac>
+<mo>)</mo>
+</mrow>
+</math></div>
+<p>
+          Artinya kunjungan hari ini memiliki bobot terbesar, lalu mengecil hingga nol setelah
+          hari ke-7. Untuk penggunaan epidemiologis nyata, jendela ini harus diganti berdasarkan
+          kebijakan program TB dan definisi infectious period yang berlaku. Pedoman contact
+          investigation bahkan menilai periode infeksius dalam rentang yang dapat jauh lebih
+          panjang daripada tujuh hari.<sup><a href="#ref6">[6]</a></sup>
+</p>
+</section>
+<section class="method-v13-section">
+<h2>E. Perhitungan Indeks</h2>
+<p>
+          Implementasi saat ini menggunakan bobot prototipe yang sengaja dibuat eksplisit
+          agar mudah dijelaskan saat demo. Untuk titik tuberculosis terkonfirmasi:
+        </p>
+<div class="method-v13-formula"><math aria-label="kontribusi confirmed" display="block">
+<mrow>
+<msub><mi>contribution</mi><mi>confirmed</mi></msub>
+<mo>=</mo><mn>0.78</mn><mo>×</mo>
+<mi>w</mi><mo>(</mo><mi>d</mi><mo>,</mo><mn>42</mn><mo>)</mo>
+<mo>×</mo>
+<msub><mi>infectious</mi><mi>factor</mi></msub>
+</mrow>
+</math></div>
+<p>
+          Untuk suspek:
+        </p>
+<div class="method-v13-formula"><math aria-label="kontribusi suspect" display="block">
+<mrow>
+<msub><mi>contribution</mi><mi>suspect</mi></msub>
+<mo>=</mo>
+<mi>P</mi><mo>(</mo><mi>TB</mi><mo>|</mo><mi>X</mi><mo>)</mo>
+<mo>×</mo><mn>0.50</mn><mo>×</mo>
+<mi>w</mi><mo>(</mo><mi>d</mi><mo>,</mo><mn>30</mn><mo>)</mo>
+</mrow>
+</math></div>
+<p>
+          Sedangkan lokasi publik berkontribusi sesuai skor lokasinya:
+        </p>
+<div class="method-v13-formula"><math aria-label="kontribusi place" display="block">
+<mrow>
+<msub><mi>contribution</mi><mi>place</mi></msub>
+<mo>=</mo>
+<mfrac>
+<msub><mi>place</mi><mi>score</mi></msub>
+<mn>100</mn>
+</mfrac>
+<mo>×</mo><mn>0.58</mn><mo>×</mo>
+<mi>w</mi><mo>(</mo><mi>d</mi><mo>,</mo><mn>36</mn><mo>)</mo>
+</mrow>
+</math></div>
+<p>
+          Kontribusi dikombinasikan menggunakan
+          <strong>1 − ∏(1 − contribution)</strong>. Dengan demikian, overlap beberapa
+          sumber meningkatkan indeks secara gradual tanpa sekadar menjumlahkan skor
+          hingga lebih dari 100.
+        </p>
+<div class="method-v13-note">
+          Koefisien 0.78, 0.50, 0.58, faktor lingkungan, serta cut-off radius adalah
+          <strong>design parameters prototype</strong>. Jangan ditulis sebagai angka klinis
+          yang berasal dari WHO/CDC kecuali nantinya sudah dikalibrasi dengan data nyata.
+        </div>
+</section>
+<section class="method-v13-section">
+<h2>F. Batasan</h2>
+<p>
+<strong>1. Batas studi bukan otomatis batas administratif resmi.</strong>
+          Polygon KAPITU pada prototipe berasal dari edge yang diberikan untuk area proyek.
+          Jika kelak dibandingkan dengan data BPS atau shapefile administratif resmi,
+          geometri, unit analisis, dan agregasi populasi harus disamakan terlebih dahulu.
+        </p>
+<p>
+<strong>2. Indeks area bukan kepastian infeksi.</strong>
+          Area berwarna tinggi hanya menunjukkan indeks pemantauan model berdasarkan input
+          yang tersedia. Orang yang berada di area tersebut tidak otomatis terinfeksi TB.
+        </p>
+<p>
+<strong>3. Data notifikasi tidak sama dengan seluruh kasus yang ada.</strong>
+          Literatur spatial TB menekankan bahwa hotspot berbasis notification data dapat
+          terpengaruh oleh kasus yang tidak terdeteksi serta perbedaan akses terhadap layanan.
+          Karena itu, warna peta harus diinterpretasikan sebagai pola data yang tersedia,
+          bukan gambaran lengkap transmisi.<sup><a href="#ref7">[7]</a></sup>
+</p>
+<p>
+<strong>4. Naive Bayes mengasumsikan independensi bersyarat.</strong>
+          Gejala dan faktor risiko medis dapat saling berkorelasi. Pelanggaran asumsi ini
+          dapat membuat posterior terlalu yakin atau menurunkan akurasi.<sup><a href="#ref3">[3]</a></sup>
+</p>
+<p>
+<strong>5. Parameter spasial belum terkalibrasi klinis.</strong>
+          Radius dan koefisien saat ini dipilih untuk menjaga visualisasi lokal, konsisten,
+          dan demonstratif. Validasi epidemiologis membutuhkan data lapangan dan metode
+          spasial yang lebih formal.
+        </p>
+<p>
+<strong>6. Privasi.</strong>
+          Sistem tidak boleh mempublikasikan NIK, alamat rumah, atau identitas pasien secara
+          terbuka. Untuk implementasi riil, data individu perlu dimasking atau diagregasi
+          sesuai kebijakan perlindungan data yang berlaku.
+        </p>
+</section>
+
+<section class="method-v13-section method-v13-references">
+<h2>G. Referensi</h2>
+<ol class="method-v13-ref-list">
+<li id="ref1">
+            W   orld Health Organization. <em>Global Tuberculosis Report 2025 – TB incidence.</em>
+            Indonesia menyumbang sekitar 10% kasus TB insiden global tahun 2024.
+            <a href="https://www.who.int/teams/global-programme-on-tuberculosis-and-lung-health/tb-reports/global-tuberculosis-report-2025/tb-disease-burden/1-1-tb-incidence" rel="noopener" target="_blank">WHO</a>.
+          </li>
+<li id="ref2">
+            Farkhan A, et al. <em>Spatiotemporal epidemiology and associated risk factors of tuberculosis incidence and mortality in Indonesia 2017–2022.</em>
+            Popul Health Metr. 2026.
+            <a href="https://pubmed.ncbi.nlm.nih.gov/41620746/" rel="noopener" target="_blank">PubMed</a>.
+          </li>
+<li id="ref3">
+            Gohari K, et al. <em>A Bayesian latent class extension of naive Bayesian classifier and its application to the classification of gastric cancer patients.</em>
+            BMC Med Res Methodol. 2023.
+            <a href="https://pubmed.ncbi.nlm.nih.gov/37605107/" rel="noopener" target="_blank">PubMed</a>.
+          </li>
+<li id="ref4">
+<em>Transparency of Classification Systems for Clinical Decision Support.</em>
+            Studi ini membahas transparansi model dan alasan penggunaan varian Naive Bayes pada konteks klinis.
+            <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7274704/" rel="noopener" target="_blank">PMC</a>.
+          </li>
+<li id="ref5">
+<em>Predicting transmission of pulmonary tuberculosis in Daerah Istimewa Yogyakarta Province, Indonesia.</em>
+            Penelitian menggunakan alamat, GPS, dan kernel estimation untuk pola spasial TB.
+            <a href="https://pubmed.ncbi.nlm.nih.gov/31099528/" rel="noopener" target="_blank">PubMed</a>.
+          </li>
+<li id="ref6">
+            CDC/NTCA. <em>Guidelines for the Investigation of Contacts of Persons with Infectious Tuberculosis.</em>
+            Risiko paparan dipengaruhi durasi, proximity, infectiousness, dan sirkulasi udara; tidak ada satu waktu/jarak paparan yang sepenuhnya aman.
+            <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr5415a1.htm" rel="noopener" target="_blank">CDC</a>.
+          </li>
+<li id="ref7">
+<em>Methods used in the spatial analysis of tuberculosis epidemiology: a systematic review.</em>
+            Review menunjukkan heterogenitas spasial TB dan keterbatasan notification data untuk menggambarkan kasus yang tidak terdeteksi.
+            <a href="https://pubmed.ncbi.nlm.nih.gov/30333043/" rel="noopener" target="_blank">PubMed</a>.
+          </li>
+</ol>
+</section>
+</article>
+</main>
+<script src="seed-data.js"></script>
+<script src="core.js"></script>
+<script src="common.js"></script>
+<script src="methodology.js"></script>
+</body>
+</html>
